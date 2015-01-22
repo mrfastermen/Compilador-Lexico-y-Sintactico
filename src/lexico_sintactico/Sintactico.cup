@@ -1,0 +1,194 @@
+package lexico_sintactico;
+
+import java_cup.runtime.*;
+import java.util.ArrayList;
+
+action code {:
+   ArrayList<Instruccion> instrucciones = new ArrayList();
+:}
+
+parser code {:
+
+    public ArrayList<Instruccion> getInstrucciones(){
+    return action_obj.instrucciones;
+    }
+
+    @Override
+    public void syntax_error(Symbol sy) {
+        token t=(token)sy.value;
+        done_parsing();
+        JOptionPane.showMessageDialog("Error sintáctico cerca de \""+ t.getCadena()+"\" : ["+t.getRow()+" : "+t.getCol()+"]",null);
+    }
+    
+:}
+
+//TERMINALES
+terminal PUNTOCOMA, COMA, ABRIRPAR, CERRARPAR, INICIO, FIN, ENTERO, RECTANGULO, 
+         CIRCULO, LINEA, ELIPSE, COLOR, ASIGNACION, FUNCION, ABRIRLLAV,CIERRALLAV, PARA, HASTA, HACER, FINCICLO, SI, 
+         ENTONCES, FINSI, IGUAL, MAYOR, MENOR, MAYORQUE, MENORQUE, SINO, FINSINO, RETORNAR, TRUE, FALSE, MIENTRAS, MAS;
+terminal token VALINT;
+terminal String IDENTIFICADOR;
+
+//NO TERMINALES
+non terminal sentencia, programa, funcion, metodo, figuras, sentpara, intvariable, llamafuncion, sentsi, condicion,
+             comparar, sentsino, hacesino, return, sentmientras, var, sent, varcoma, expfigura, expf;
+non terminal Instruccion instruccion, entero, linea, circulo, rectangulo, elipse, color;
+
+//GRAMATICA
+start with programa;
+
+//ESTRUCTURA
+programa ::= INICIO sent FIN
+;
+
+//INSTRUCCIONES
+
+sent ::= sentencia
+       | 
+;
+sentencia ::= sentencia instruccion
+            | instruccion
+            | sentencia funcion
+            | funcion
+            | sentencia sentpara
+            | sentpara
+            | sentencia llamafuncion
+            | llamafuncion
+            | sentencia sentsi
+            | sentsi
+            | sentencia sentmientras
+            | sentmientras
+            | sentencia expf
+            | expf
+;
+
+funcion ::= FUNCION IDENTIFICADOR ABRIRPAR metodo CERRARPAR ABRIRLLAV sentencia CIERRALLAV
+;
+
+llamafuncion ::= IDENTIFICADOR ABRIRPAR metodo CERRARPAR PUNTOCOMA
+;
+
+metodo ::= IDENTIFICADOR COMA IDENTIFICADOR 
+         | COMA IDENTIFICADOR
+         | IDENTIFICADOR
+         | 
+;
+
+intvariable ::= VALINT
+              | IDENTIFICADOR
+;
+
+sentpara ::= PARA intvariable HASTA intvariable HACER sentencia FINCICLO
+;
+
+sentmientras ::= MIENTRAS condicion HACER sentencia FINCICLO
+;
+
+sentsi ::= SI condicion ENTONCES sentencia FINSI
+         | sentsi sentsino
+;
+
+condicion ::= figuras comparar intvariable
+;
+
+comparar ::= IGUAL
+           | MAYOR
+           | MENOR
+           | MAYORQUE
+           | MENORQUE
+;
+
+sentsino ::= SINO hacesino FINSINO
+;
+hacesino ::= sentencia
+           | RETORNAR return PUNTOCOMA
+;
+
+return ::= TRUE
+         | FALSE
+         | intvariable
+;
+
+figuras ::= LINEA
+          | CIRCULO
+          | RECTANGULO
+          | ELIPSE
+          | COLOR
+          | intvariable
+;
+
+instruccion ::= entero
+              | circulo
+              | color
+              | linea
+              | rectangulo
+              | elipse
+;
+
+var ::= IDENTIFICADOR
+      | IDENTIFICADOR ASIGNACION intvariable
+;
+
+varcoma ::= var 
+          | varcoma COMA var
+;
+entero ::= ENTERO varcoma PUNTOCOMA
+;
+
+expfigura ::= figuras
+            | figuras MAS figuras
+            | ABRIRPAR expfigura CERRARPAR
+;
+
+expf ::= IDENTIFICADOR ASIGNACION expfigura PUNTOCOMA
+;
+
+linea ::= LINEA ABRIRPAR VALINT:a COMA VALINT:b COMA VALINT:c COMA VALINT:d CERRARPAR PUNTOCOMA
+        {:int[] tmp = new int[4];
+        tmp[0]=Integer.parseInt(a.getCadena());
+        tmp[1]=Integer.parseInt(b.getCadena());
+        tmp[2]=Integer.parseInt(c.getCadena());
+        tmp[3]=Integer.parseInt(d.getCadena());
+        instrucciones.add(new Instruccion("linea",tmp));
+        :}
+;
+
+rectangulo ::= RECTANGULO ABRIRPAR VALINT:a COMA VALINT:b COMA VALINT:c COMA VALINT:d CERRARPAR PUNTOCOMA
+            {:int[] tmp = new int[4];
+            tmp[0]=Integer.parseInt(a.getCadena());
+            tmp[1]=Integer.parseInt(b.getCadena());
+            tmp[2]=Integer.parseInt(c.getCadena());
+            tmp[3]=Integer.parseInt(d.getCadena());
+            instrucciones.add(new Instruccion("rectangulo",tmp));
+            :}
+;
+
+elipse ::= ELIPSE ABRIRPAR VALINT:a COMA VALINT:b COMA VALINT:c COMA VALINT:d COMA VALINT:e COMA VALINT:f CERRARPAR PUNTOCOMA
+            {:int[] tmp = new int[6];
+            tmp[0]=Integer.parseInt(a.getCadena());
+            tmp[1]=Integer.parseInt(b.getCadena());
+            tmp[2]=Integer.parseInt(c.getCadena());
+            tmp[3]=Integer.parseInt(d.getCadena());
+            tmp[4]=Integer.parseInt(e.getCadena());
+            tmp[5]=Integer.parseInt(f.getCadena());
+            instrucciones.add(new Instruccion("elipse",tmp));
+            :}
+;
+
+circulo ::= CIRCULO ABRIRPAR VALINT:a COMA VALINT:b COMA VALINT:c CERRARPAR PUNTOCOMA
+        {:int[] tmp = new int[3];
+        tmp[0]=Integer.parseInt(a.getCadena());
+        tmp[1]=Integer.parseInt(b.getCadena());
+        tmp[2]=Integer.parseInt(c.getCadena());
+        instrucciones.add(new Instruccion("circulo",tmp));
+        :}
+;
+
+color ::= COLOR ABRIRPAR VALINT:a COMA VALINT:b COMA VALINT:c CERRARPAR PUNTOCOMA
+        {:int[] tmp = new int[3];
+        tmp[0]=Integer.parseInt(a.getCadena());
+        tmp[1]=Integer.parseInt(b.getCadena());
+        tmp[2]=Integer.parseInt(c.getCadena());
+        instrucciones.add(new Instruccion("color",tmp));
+        :}
+;

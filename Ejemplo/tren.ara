@@ -1,0 +1,83 @@
+inicio
+
+entero num = 1, sum = 0, cont;
+entero rueda = 4;
+entero colores = 1;
+entero Tren = 1;
+
+si Tren >= 1 entonces
+	haceTren(tren1);
+finsi
+sino
+	retornar false;
+finsino
+
+funcion haceTren(tren1){
+para cuadros hasta num hacer
+	rectangulo(20, 20, 170, 60);
+	si rectangulo == num entonces
+		mientras rectangulo <= 5 hacer
+			color(30,10,143);
+			rectangulo(40, 80, 130, 200);
+			color(190,86,88);
+			rectangulo(170, 180, 180, 100);
+			rectangulo(60, 90, 70, 70);
+			rectangulo(280, 140, 30, 40);
+			color(33,93,49);
+			si color == colores entonces
+				rectangulo(260, 280, 90, 40);
+			finsi
+		finciclo
+	finsi
+	sino
+		retornar false;
+	finsino
+finciclo
+
+pintaLlantas(llantaGran, llantaPeq);
+retoques();
+linea(0, 360, 600, 360);
+linea(0, 366, 600, 360);
+linea(0, 370, 600, 360);
+
+}
+
+funcion pintaLlantas(llantaGran, llantaPeq){
+mientras circulo <= 4 hacer
+	para llantaGran hasta 2 hacer
+		color(1, 1, 1);
+		circulo(50, 250, 90);
+		circulo(155, 250, 90);
+	finciclo
+	suma = (circulo + circulo);
+	para llantaPeq hasta 2 hacer
+		color(1, 1, 1);
+		circulo(263, 300, 40);
+		suma = (circulo + circulo);
+		circulo(307, 300, 40);
+	finciclo
+finciclo
+}
+
+funcion retoques(){
+	para lineas hasta 4 hacer
+		cont = 1;
+		linea(270, 140, 320, 140);
+		linea(255, 110, 330, 110);
+		
+		cont = lineas + 2;
+		linea(270, 140, 255, 110);
+		linea(320, 140, 330, 110);
+
+		para lineas2 hasta 2 hacer
+			cont2 = 1;
+			color(81, 86, 40);
+			linea(350, 320, 450, 320);
+			linea(450, 320, 350, 220);
+			elipse(260, 200, 100,100,100,100);
+			elipse(270, 200, 100,100,100,100);
+		finciclo
+	finciclo
+}
+
+fin
